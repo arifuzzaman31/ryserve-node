@@ -1,22 +1,42 @@
 const jwt = require('jsonwebtoken');
 
-export const generateUserToken = async(userData) => {
+const generateUserToken = async(userData) => {
     const payload = {
         id: userData.id,
         name: userData.name,
         email: userData.email,
+        userType:userData.userType,
         phoneNumber: userData.phoneNumber,
         platform: userData.platform
       };
       const secret = process.env.JWT_SECRET;
       const expireTime = process.env.JWT_EXPIRES_IN;
       const options = { expiresIn: expireTime };
-      const token = jwt.sign(payload, secret, options);
+      const token = await jwt.sign(payload, secret, options);
       return token;
 }
-export const userByToken = async(token) => {
+const userByToken = async(token) => {
     const secret = process.env.JWT_SECRET;
     var authorization = token.split(' ')[1];
-    const info = jwt.verify(authorization, secret);
+    const info = await jwt.verify(authorization, secret);
     return info;
   }
+
+  const permissionSetter = async(user) => {
+    let permissions = null
+      if((user.userType == 'BUSINESS_OWNER') || (user.userType == 'CRM_EDITOR')){
+          permissions = ['business-view','business-edit','business-delete','business-create',
+          'branch-view','branch-edit','branch-delete','branch-create',
+          'listing-view','listing-edit','listing-delete','listing-create',
+          'listingtype-view','listingtype-edit','listingtype-delete','listingtype-create',
+          'reservation-view','reservation-create','reservation-edit','reservation-delete',
+          'employee-view','report-view','revenue-report','upcoming-report','complete-report','cancel-report']
+          if(user.userType == 'CRM_EDITOR') permissions.push('amenities-view','partner-view','cuisine-view')
+          user.roles = {permissions}
+        }
+      return user;
+  }
+
+module.exports = {
+  userByToken,generateUserToken,permissionSetter
+}

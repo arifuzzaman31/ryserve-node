@@ -2,9 +2,13 @@ const express = require('express');
 const routes = express.Router();
 const owner_controller = require("../controller/owner");
 const auth_controller = require("../controller/auth");
+const adminMiddleware = require("../middleware/adminMiddleware")
 
 routes.post("/login",auth_controller.attempt_to_login);
-routes.route("/employee")
+routes.get("/middle",adminMiddleware,async(req,res) => {
+    res.send("hello")
+});
+routes.use("/employee",adminMiddleware)
     .get(owner_controller.emp_list)
     .post(owner_controller.create_emp_own);
 

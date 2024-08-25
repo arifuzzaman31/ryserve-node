@@ -4,18 +4,28 @@ const helper = require('../helper/helper')
 const ownerService = require('../services/ownerService')
 
 exports.create_emp_own = asyncHandler(async (req, res, next) => {
-    const {name,email,confirmPassword,phoneNumber} = req.body;
+    const {name,email,confirmPassword,userType,occupation,designation,status,phoneNumber} = req.body;
+    const userId = await ownerService.propertyBy(req.user);
     const hashPass = await helper.bcryptHash(confirmPassword)
-    const user = await prisma.Owner.create({
-        data: {
-          name: name,
-          email: email,
-          password: hashPass,
-          isVerify: true,
-          phoneNumber: phoneNumber
-        },
+    let preperData = {
+        name: name,
+        email: email,
+        userType: userType,
+        phoneNumber: phoneNumber,
+        occupation: occupation,
+        designation: designation,
+        password: hashPass,
+        status: status == 'true' ? true : false
+    }
+    if(userId != 'all'){
+        preperData.ownerId = userId;
+        // preperData.roleId = reqData.roleId;
+    }
+    // return preperData;
+    const employee = await prisma.Owner.create({
+        data: preperData
     });
-    res.send(user);
+    res.send(employee);
 });
 
 exports.emp_list = asyncHandler(async (req, res, next) => {
