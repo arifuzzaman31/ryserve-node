@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken")
 
-const verifyToken = async(req, res, next) => {
+const verifyToken = async (req, res, next) => {
     const token = req.headers['authorization'];
     const secretKey = process.env.JWT_SECRET
     if (typeof token !== 'undefined') {
@@ -8,7 +8,9 @@ const verifyToken = async(req, res, next) => {
         if (err) {
           res.status(403).send('Invalid token');
         } else {
-          req.user = decoded.user;
+          // console.log(decoded)
+          req.user = decoded;
+          // console.log(req.user)
           next();
         }
       });
@@ -16,4 +18,4 @@ const verifyToken = async(req, res, next) => {
       res.status(401).send('Unauthorized');
     }
   }
-  module.exports = verifyToken
+module.exports = verifyToken

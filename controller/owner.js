@@ -19,9 +19,9 @@ exports.create_emp_own = asyncHandler(async (req, res, next) => {
     }
     if(userId != 'all'){
         preperData.ownerId = userId;
-        // preperData.roleId = reqData.roleId;
     }
-    // return preperData;
+    res.send(preperData);
+    // preperData.roleId = reqData.roleId;
     const employee = await prisma.Owner.create({
         data: preperData
     });

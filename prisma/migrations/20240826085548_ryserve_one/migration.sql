@@ -1,10 +1,3 @@
-/*
-  Warnings:
-
-  - A unique constraint covering the columns `[email]` on the table `User` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `updatedAt` to the `User` table without a default value. This is not possible if the table is not empty.
-
-*/
 -- CreateEnum
 CREATE TYPE "loggerType" AS ENUM ('DASHBOARD_USER', 'APPS_USER');
 
@@ -37,32 +30,6 @@ CREATE TYPE "BookingStatus" AS ENUM ('CONFIRMED', 'DEACTIVE', 'ON_HOLD', 'CANCEL
 
 -- CreateEnum
 CREATE TYPE "PaymentStatus" AS ENUM ('PAID', 'UNPAID', 'OTHER');
-
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "birthDate" TIMESTAMP(3),
-ADD COLUMN     "city" TEXT,
-ADD COLUMN     "country" TEXT,
-ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "deleted" TIMESTAMP(3),
-ADD COLUMN     "designation" TEXT,
-ADD COLUMN     "firstName" TEXT,
-ADD COLUMN     "isVerify" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "lastName" TEXT,
-ADD COLUMN     "location" TEXT,
-ADD COLUMN     "nid" INTEGER,
-ADD COLUMN     "occupation" TEXT,
-ADD COLUMN     "otp" INTEGER,
-ADD COLUMN     "otpExpireAt" TIMESTAMP(3),
-ADD COLUMN     "phoneNumber" TEXT,
-ADD COLUMN     "picture" TEXT,
-ADD COLUMN     "residenceAddress" TEXT,
-ADD COLUMN     "status" BOOLEAN NOT NULL DEFAULT false,
-ADD COLUMN     "tin" TEXT,
-ADD COLUMN     "updatedAt" TIMESTAMP(3) NOT NULL,
-ADD COLUMN     "userType" "UserType" DEFAULT 'CUSTOMER',
-ALTER COLUMN "name" DROP NOT NULL,
-ALTER COLUMN "email" DROP NOT NULL,
-ALTER COLUMN "password" DROP NOT NULL;
 
 -- CreateTable
 CREATE TABLE "Account" (
@@ -121,6 +88,37 @@ CREATE TABLE "Owner" (
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "Owner_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" SERIAL NOT NULL,
+    "email" TEXT,
+    "firstName" TEXT,
+    "lastName" TEXT,
+    "name" TEXT,
+    "userType" "UserType" DEFAULT 'CUSTOMER',
+    "birthDate" TIMESTAMP(3),
+    "phoneNumber" TEXT,
+    "picture" TEXT,
+    "country" TEXT,
+    "city" TEXT,
+    "location" TEXT,
+    "residenceAddress" TEXT,
+    "occupation" TEXT,
+    "designation" TEXT,
+    "nid" INTEGER,
+    "tin" TEXT,
+    "password" TEXT,
+    "otp" INTEGER,
+    "otpExpireAt" TIMESTAMP(3),
+    "isVerify" BOOLEAN NOT NULL DEFAULT false,
+    "status" BOOLEAN NOT NULL DEFAULT false,
+    "deleted" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -414,6 +412,12 @@ CREATE UNIQUE INDEX "Owner_email_key" ON "Owner"("email");
 CREATE INDEX "Owner_name_email_phoneNumber_roleId_idx" ON "Owner"("name", "email", "phoneNumber", "roleId");
 
 -- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE INDEX "User_name_email_phoneNumber_city_idx" ON "User"("name", "email", "phoneNumber", "city");
+
+-- CreateIndex
 CREATE INDEX "RolePermission_assetId_roleName_idx" ON "RolePermission"("assetId", "roleName");
 
 -- CreateIndex
@@ -457,12 +461,6 @@ CREATE INDEX "Booking_assetId_subAssetId_subAssetCompId_ownerId_customerI_idx" O
 
 -- CreateIndex
 CREATE INDEX "Payment_bookingId_paymentDate_status_idx" ON "Payment"("bookingId", "paymentDate", "status");
-
--- CreateIndex
-CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
-
--- CreateIndex
-CREATE INDEX "User_name_email_phoneNumber_city_idx" ON "User"("name", "email", "phoneNumber", "city");
 
 -- AddForeignKey
 ALTER TABLE "Account" ADD CONSTRAINT "Account_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE SET NULL ON UPDATE CASCADE;
