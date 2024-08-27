@@ -87,6 +87,9 @@ exports.business_get =  asyncHandler(async(req,res) => {
     const business = await prisma.business.findMany({
         where: {
             id:id
+        },
+        include: {
+            owner: { select: { id: true, name: true, email: true } }
         }
     })
     res.status(200).send(business);

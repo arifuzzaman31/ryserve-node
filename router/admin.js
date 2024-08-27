@@ -5,8 +5,9 @@ const auth_controller = require("../controller/auth");
 const business_controller = require("../controller/business");
 const asset_controller = require("../controller/asset");
 const amenity_controller = require("../controller/amenities");
+const cuisine_controller = require("../controller/cuisine");
 const subasset_controller = require("../controller/subasset");
-// const role_controller = require("../controller/role");
+const role_controller = require("../controller/role");
 const adminMiddleware = require("../middleware/adminMiddleware")
 
 routes.post("/login", auth_controller.attempt_to_login);
@@ -57,6 +58,16 @@ routes.route("/amenities/:id")
     .put(amenity_controller.update_amenity)
     .delete(amenity_controller.delete_amenity);
 
+routes.route("/cuisine")
+    .all(adminMiddleware)
+    .get(cuisine_controller.cuisine_list)
+    .post(cuisine_controller.create_cuisine);
+routes.route("/cuisine/:id")
+    .all(adminMiddleware)
+    .get(cuisine_controller.get_cuisine)
+    .put(cuisine_controller.update_cuisine)
+    .delete(cuisine_controller.delete_cuisine);
+
 routes.route("/sub-asset")
     .all(adminMiddleware)
     .get(subasset_controller.subasset_list)
@@ -67,5 +78,10 @@ routes.route("/sub-asset/:id")
     .get(subasset_controller.get_subasset)
     .put(subasset_controller.subasset_update)
     .delete(subasset_controller.delete_subasset);
+
+routes.route("/role-permission")
+    .all(adminMiddleware)
+    .get(role_controller.role_list)
+    .post(role_controller.create_role);
 
 module.exports = routes;
