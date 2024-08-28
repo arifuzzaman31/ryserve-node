@@ -1,6 +1,5 @@
 const asyncHandler = require("express-async-handler");
 const prisma = require("../../db/prisma");
-const helper = require("../../helper/helper");
 
 exports.add_to_wishList = asyncHandler(async (req, res) => {
     try {
