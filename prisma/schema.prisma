@@ -52,7 +52,7 @@ model Owner{
   residenceAddress   String?
   occupation    String?
   designation    String?
-  nid  Int?
+  nid  String?
   tin  String?
   havingBusiness  Boolean? @default(false)
   business Business[]

@@ -4,11 +4,20 @@ const generateUserToken = async(userData) => {
     const payload = {
         id: userData.id,
         name: userData.name,
-        email: userData.email,
         userType:userData.userType,
-        phoneNumber: userData.phoneNumber,
         platform: userData.platform
       };
+      if (
+        userData.userType == "BUSINESS_MANAGER" ||
+        userData.userType == "LISTING_MANAGER"
+      ) {
+        payload.assetId = userData.roles?.assetId;
+      }
+      if (userData.platform == "APPS_USER")
+      {
+        payload.email = userData.email
+        payload.phoneNumber = userData.phoneNumber
+      }
       const secret = process.env.JWT_SECRET;
       const expireTime = process.env.JWT_EXPIRES_IN;
       const options = { expiresIn: expireTime };

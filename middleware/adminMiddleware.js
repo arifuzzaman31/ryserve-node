@@ -9,6 +9,7 @@ const verifyToken = async (req, res, next) => {
           res.status(403).send('Invalid token');
         } else {
           req.user = decoded;
+          // console.log(decoded.userType)
           next();
         }
       });
