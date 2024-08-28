@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../db/prisma");
+const prisma = require("../../db/prisma");
 
 exports.create_table = asyncHandler(async (req, res) => {
   const data = await req.body;
@@ -74,20 +74,20 @@ exports.table_update = asyncHandler(async (req, res) => {
   const data = await req.body;
   try {
     const table = await prisma.Table.update({
-        where: {
-          id: id,
-        },
-        data: {
-          type: data.type,
-          capacity: data.capacity,
-          position: data.position,
-          size: data.size,
-          image: data.image,
-          splitable: data.splitable,
-          ryservable: data.ryservable,
-          status: data.status == 'true' ? true : false
-        },
-      });
+      where: {
+        id: id,
+      },
+      data: {
+        type: data.type,
+        capacity: data.capacity,
+        position: data.position,
+        size: data.size,
+        image: data.image,
+        splitable: data.splitable,
+        ryservable: data.ryservable,
+        status: data.status == 'true' ? true : false
+      },
+    });
     res.status(201).send(table);
   } catch (error) {
     res.status(400).send(error);

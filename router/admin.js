@@ -1,16 +1,16 @@
 const express = require("express");
 const routes = express.Router();
-const owner_controller = require("../controller/owner");
-const auth_controller = require("../controller/auth");
-const business_controller = require("../controller/business");
-const asset_controller = require("../controller/asset");
-const amenity_controller = require("../controller/amenities");
-const cuisine_controller = require("../controller/cuisine");
-const subasset_controller = require("../controller/subasset");
-const subassetcomp_controller = require("../controller/subassetcomp");
-const table_controller = require("../controller/table");
-const role_controller = require("../controller/role");
-const booking_controller = require("../controller/booking");
+const owner_controller = require("../controller/backend/owner");
+const auth_controller = require("../controller/backend/auth");
+const business_controller = require("../controller/backend/business");
+const asset_controller = require("../controller/backend/asset");
+const amenity_controller = require("../controller/backend/amenities");
+const cuisine_controller = require("../controller/backend/cuisine");
+const subasset_controller = require("../controller/backend/subasset");
+const subassetcomp_controller = require("../controller/backend/subassetcomp");
+const table_controller = require("../controller/backend/table");
+const role_controller = require("../controller/backend/role");
+const booking_controller = require("../controller/backend/booking");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 routes.post("/login", auth_controller.attempt_to_login);

@@ -39,7 +39,7 @@ const runSMSservice = async (message,phone_number) => {
             return response.json();
         })
         .then(data => {
-            console.log(data.MessageId);
+            console.log(data);
         })
         .catch(error => {
             console.error('Error:', error);

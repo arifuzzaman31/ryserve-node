@@ -1,14 +1,14 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require('../db/prisma');
-const ownerService = require('../services/ownerService')
-const helper = require('../helper/helper')
+const prisma = require('../../db/prisma');
+const ownerService = require('../../services/ownerService')
+const helper = require('../../helper/helper')
 
 exports.create_business = asyncHandler(async (req, res) => {
     let dataId = await ownerService.propertyBy(req.user);
     const data = await req.body
-    if(dataId == 'all'){
+    if (dataId == 'all') {
         dataId = data.partnerId
-    } 
+    }
     try {
         const business = await prisma.business.create({
             data: {
@@ -34,17 +34,17 @@ exports.create_business = asyncHandler(async (req, res) => {
                 status: data.status == "true" ? true : false
             }
         });
-        res.status(200).send(business); 
+        res.status(200).send(business);
     } catch (error) {
         res.status(400).send(error);
     }
 })
 
-exports.business_list = asyncHandler(async(req,res) => {
-    const {pageNo,perPage} = req.query;
+exports.business_list = asyncHandler(async (req, res) => {
+    const { pageNo, perPage } = req.query;
     const dataId = await ownerService.propertyBy(req.user)
     let where = {}
-    if(dataId != 'all'){
+    if (dataId != 'all') {
         where.ownerId = dataId
     }
     // if ((user.userType == 'BUSINESS_MANAGER') || (user.userType == 'LISTING_MANAGER')) {
@@ -52,9 +52,9 @@ exports.business_list = asyncHandler(async(req,res) => {
     // }
     // return dataId
     const perPg = perPage ? Number(perPage) : 10
-    const from = Number(pageNo*perPg)-Number(perPg)
-    const [count,business] = await prisma.$transaction([
-        prisma.Business.count({where}),
+    const from = Number(pageNo * perPg) - Number(perPg)
+    const [count, business] = await prisma.$transaction([
+        prisma.Business.count({ where }),
         prisma.business.findMany({
             skip: pageNo ? from : 0,
             take: perPg,
@@ -64,29 +64,29 @@ exports.business_list = asyncHandler(async(req,res) => {
             },
             include: {
                 owner: {
-                  select: {
-                    id: true,
-                    name: true,
-                    email: true
-                  },
+                    select: {
+                        id: true,
+                        name: true,
+                        email: true
+                    },
                 },
-              },
+            },
         })
-      ]);
-    
-      res.status(200).send({
+    ]);
+
+    res.status(200).send({
         pagination: {
-          total: Math.ceil(count / perPg)
+            total: Math.ceil(count / perPg)
         },
         data: business
-      });
+    });
 })
 
-exports.business_get =  asyncHandler(async(req,res) => {
+exports.business_get = asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const business = await prisma.business.findMany({
         where: {
-            id:id
+            id: id
         },
         include: {
             owner: { select: { id: true, name: true, email: true } }
@@ -95,15 +95,15 @@ exports.business_get =  asyncHandler(async(req,res) => {
     res.status(200).send(business);
 })
 
-exports.business_update =  asyncHandler(async(req,res) => {
+exports.business_update = asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const data = await req.body
     try {
         const business = await prisma.business.update({
-            where:{
+            where: {
                 id: id,
             },
-            data:{
+            data: {
                 businessName: data.businessName,
                 slug: helper.slugify(data.businessName),
                 shortDescription: data.shortDescription,
@@ -130,10 +130,10 @@ exports.business_update =  asyncHandler(async(req,res) => {
         res.status(400).send(error);
     }
 })
-exports.delete_business =  asyncHandler(async(req,res,next) => {
+exports.delete_business = asyncHandler(async (req, res, next) => {
     const id = parseInt(req.params.id, 10);
     const business = await prisma.business.delete({
-        where:{
+        where: {
             id: id
         }
     });

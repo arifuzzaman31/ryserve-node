@@ -1,6 +1,6 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../db/prisma");
-const ownerService = require("../services/ownerService");
+const prisma = require("../../db/prisma");
+const ownerService = require("../../services/ownerService");
 
 exports.create_subassetcomp = asyncHandler(async (req, res) => {
   const data = await req.body;
@@ -75,7 +75,7 @@ exports.create_subassetcomp = asyncHandler(async (req, res) => {
     });
     res.status(200).send(result);
   } catch (error) {
-    res.status(500).send(error.message );
+    res.status(500).send(error.message);
   }
 });
 

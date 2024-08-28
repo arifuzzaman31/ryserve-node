@@ -54,7 +54,7 @@ const find_or_createUser = async (requestData) => {
         lastName : userData.lastName,
         name : userData.firstName+' '+userData.lastName,
         email : userData.email,
-        birthDate : new Date(userData.birthDate),
+        birthDate: userData.birthDate ? new Date(userData.birthDate) : null,
         status : true,
         otp : null,
         isVerify : true,

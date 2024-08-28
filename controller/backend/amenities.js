@@ -1,5 +1,5 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../db/prisma");
+const prisma = require("../../db/prisma");
 
 exports.create_amenity = asyncHandler(async (req, res) => {
   const data = await req.body;

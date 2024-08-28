@@ -1,7 +1,7 @@
 const asyncHandler = require("express-async-handler");
-const prisma = require("../db/prisma");
-const helper = require('../helper/helper')
-const ownerService = require('../services/ownerService')
+const prisma = require("../../db/prisma");
+const helper = require('../../helper/helper')
+const ownerService = require('../../services/ownerService')
 
 exports.create_role = asyncHandler(async (req, res) => {
     const data = await req.body;
@@ -22,45 +22,45 @@ exports.create_role = asyncHandler(async (req, res) => {
 });
 
 exports.role_list = asyncHandler(async (req, res) => {
-    const { status,pageNo,perPage,noPaginate } = req.query
+    const { status, pageNo, perPage, noPaginate } = req.query
     const dataId = await ownerService.propertyBy(req.user)
     let where = {}
-    if(dataId != 'all'){
+    if (dataId != 'all') {
         where.asset = {
             business: {
                 ownerId: dataId
             }
         }
     }
-    if(status){
+    if (status) {
         where.status = true
     }
-    let skip = pageNo ? Number(pageNo*perPage)-Number(perPage) : 0;
-    let take =  perPage ? Number(perPage) : 10;
+    let skip = pageNo ? Number(pageNo * perPage) - Number(perPage) : 0;
+    let take = perPage ? Number(perPage) : 10;
 
-    const [count,roles] = await prisma.$transaction([
-        prisma.RolePermission.count({where}),
+    const [count, roles] = await prisma.$transaction([
+        prisma.RolePermission.count({ where }),
         prisma.RolePermission.findMany({
-            ...(noPaginate=='yes' ? {} : { skip: skip, take: take }),
+            ...(noPaginate == 'yes' ? {} : { skip: skip, take: take }),
             where,
-            include:{
-                asset:{
-                    select:{id:true,propertyName:true}
+            include: {
+                asset: {
+                    select: { id: true, propertyName: true }
                 }
             },
             orderBy: {
                 createdAt: 'desc'
-              }
-            
+            }
+
         })
-      ]);
-    
-      res.status(200).send( {
+    ]);
+
+    res.status(200).send({
         pagination: {
-          total: Math.ceil(count / take)
+            total: Math.ceil(count / take)
         },
         data: roles
-      })
+    })
 });
 
 exports.update_role = asyncHandler(async (req, res) => {
@@ -68,8 +68,8 @@ exports.update_role = asyncHandler(async (req, res) => {
     try {
         const id = parseInt(req.params.id, 10);
         const roles = await prisma.RolePermission.update({
-            where:{
-                id:id
+            where: {
+                id: id
             },
             data: {
                 assetId: data.assetId,
@@ -88,7 +88,7 @@ exports.get_role = asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const roles = await prisma.RolePermission.findMany({
         where: {
-            id:id
+            id: id
         }
     })
     res.status(200).send(roles);
@@ -97,7 +97,7 @@ exports.get_role = asyncHandler(async (req, res) => {
 exports.delete_role = asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
     const roles = await prisma.RolePermission.delete({
-        where:{
+        where: {
             id: id
         }
     });
