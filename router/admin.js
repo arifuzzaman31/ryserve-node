@@ -127,9 +127,8 @@ routes
     .put(booking_controller.update_booking)
     .delete(booking_controller.delete_booking);
 
-routes
-    .route("/report").all(adminMiddleware)
-    .get(report_controller.get_report);
+routes.get("/report",adminMiddleware,report_controller.get_report);
+routes.get("/download-excel",adminMiddleware,report_controller.excel_download);
 
 routes.get("/sales-data",adminMiddleware,dashboard_controller.sales_data);
 routes.get("/status-slot-data",adminMiddleware,dashboard_controller.status_data);
