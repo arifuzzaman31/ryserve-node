@@ -16,7 +16,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
             }
         });
         if (chkBooking) {
-            res.status(400).send({ message: 'This Slot Already Booked!' });
+            return res.status(400).send({ message: 'This Slot Already Booked!' });
         }
         let createdUser = await userService.get_user({ phoneNumber: data.user?.phoneNumber })
         if (!createdUser) {
@@ -71,7 +71,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
         if (booking) {
             let phone_number = "88" + phoneNumber;
             let message = "Thank you.\nYour reservation is Confirmed.";
-            await helper.runSMSservice(encodeURI(message), phone_number)
+            if(process.env.SMS_TO_USER) {
+                await helper.runSMSservice(encodeURI(message), phone_number)
+            } 
             await prisma.Asset.update({
                 where: { id: booking.assetId },
                 data: {
@@ -81,9 +83,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
                 }
             });
         }
-        res.status(200).send(booking);
+       return res.status(200).send(booking);
     } catch (error) {
-        res.status(500).send(error.message);
+       return res.status(500).send(error.message);
     }
 })
 
@@ -97,6 +99,7 @@ exports.get_all_booking = asyncHandler(async (req, res) => {
     if ((req.user.userType == 'BUSINESS_MANAGER') || (req.user.userType == 'LISTING_MANAGER')) {
         where.assetId = req.user.assetId
     }
+    where.deleted = null
     if (status) where.status = status
     if (subAssetCompId) where.subAssetCompId = subAssetCompId
     if (event) {
@@ -151,10 +154,104 @@ exports.get_all_booking = asyncHandler(async (req, res) => {
         })
     ]);
 
-    res.status(200).send({
+   return res.status(200).send({
         pagination: {
             total: Math.ceil(count / perPg)
         },
         data: bookings
     });
+})
+
+exports.get_booking = asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const booking = await prisma.Booking.findFirst({
+        where: {
+            id: id
+        }
+    })
+   return res.status(200).send(booking);
+})
+
+exports.update_booking = asyncHandler(async (req, res) => {
+    try {
+        const id = parseInt(req.params.id, 10);
+        const data = await req.body;
+        const prevasset = await prisma.Booking.findFirst({
+            where: {id: id},
+            include:{
+                subAssetComponent: {
+                    select: {
+                        id:true,listingName:true
+                    }
+                },
+            }
+        })
+        if(data.status == 'COMPLETED' && prevasset.endDate > new Date()){
+            return  res.status(500).send({status:'error',message:'The completion status is not allowed because the reservation date has not yet ended.!'})
+        }
+        const prepareData = {...prevasset,...data};
+        prepareData.startDate = data.startDate ? new Date(data.startDate) : prepareData.startDate,
+        prepareData.endDate = data.endDate ? new Date(data.endDate) : prepareData.endDate;
+        if(data.tableId){
+            prepareData.tableId = data.tableId;
+            if(data.status == 'CONFIRMED' && prevasset.endDate > new Date()){
+                const chkBooking = await prisma.booking.findFirst({
+                    where: {
+                        subAssetCompId: prevasset.subAssetCompId,
+                        tableId: data.tableId,
+                        startDate: prevasset.startDate,
+                        slot: data.slot
+                    }
+                });
+                if(chkBooking) {
+                    return res.status(500).send({status:'error',message:'This Slot Already Assigned in this Time!'})
+                }
+            }
+        }
+        delete prepareData['id']
+        delete prepareData['createdAt']
+        delete prepareData['updatedAt']
+        delete prepareData['deleted']
+        const booking = await prisma.Booking.update({
+            where:{
+                id: prevasset.id,
+            },
+            data:prepareData
+        });
+        if(booking){
+            const customDate = await helper.formattedDate(booking.startDate)
+            let phone_number = "88"+prevasset.phoneNumber;
+            let message;
+            if(data.status == 'CONFIRMED' || data.status == 'CANCELED'){
+                let text = data.status.toLowerCase()
+                message = `Reservation under ${prevasset.customerName} at ${prevasset.subAssetComponent.listingName} is ${text} for ${customDate} at ${booking.slot}.\nFor support, contact 01923283543`;
+                if(process.env.SMS_TO_USER) {
+                    await helper.runSMSservice(encodeURI(message),phone_number)
+                }
+            }
+            if(data.slot != prevasset.slot){
+                message = `Your reservation slot is updated from ${prevasset.slot} to ${data.slot}.\nFor support, contact 01923283543`;
+                if(process.env.SMS_TO_USER) {
+                    await helper.runSMSservice(encodeURI(message),phone_number)
+                }
+            }
+        }
+        return res.status(200).send(booking)
+        
+    } catch (error) {
+        return res.status(500).send(error.message)
+    }
+})
+
+exports.delete_booking = asyncHandler(async (req, res) => {
+    const id = parseInt(req.params.id, 10);
+    const booking = await prisma.Booking.update({
+        where: {
+            id: id
+        },
+        data:{
+            deleted: new Date()
+        }
+    });
+    return res.status(200).send(booking);
 })

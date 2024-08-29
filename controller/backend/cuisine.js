@@ -11,9 +11,9 @@ exports.create_cuisine = asyncHandler(async (req, res) => {
         status: data.status == "true" ? true : false,
       },
     });
-    res.status(200).send(cuisine);
+    return res.status(200).send(cuisine);
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });
 
@@ -31,7 +31,7 @@ exports.cuisine_list = asyncHandler(async (req, res) => {
     },
     where,
   });
-  res.status(200).send(cuisine);
+  return res.status(200).send(cuisine);
 });
 
 exports.update_cuisine = asyncHandler(async (req, res) => {
@@ -47,9 +47,9 @@ exports.update_cuisine = asyncHandler(async (req, res) => {
         status: data.status == "true" ? true : false,
       },
     });
-    res.status(200).send(cuisine);
+    return res.status(200).send(cuisine);
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });
 
@@ -61,22 +61,25 @@ exports.get_cuisine = asyncHandler(async (req, res) => {
         id: id,
       },
     });
-    res.status(200).send(cuisine);
+    return res.status(200).send(cuisine);
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });
 
 exports.delete_cuisine = asyncHandler(async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const cuisine = await prisma.cuisine.delete({
+    const cuisine = await prisma.cuisine.update({
       where: {
-        id: id
+          id: id
       },
-    });
-    res.status(200).send(cuisine);
+      data:{
+          deleted: new Date()
+      }
+  });
+    return res.status(200).send(cuisine);
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });

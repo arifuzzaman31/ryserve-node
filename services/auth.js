@@ -5,15 +5,12 @@ const generateUserToken = async (userData) => {
     id: userData.id,
     name: userData.name,
     userType: userData.userType,
-    platform: userData.platform
+    platform: userData.platform == 'apps' ? 'APPS_USER' : userData.platform
   };
-  if (
-    userData.userType == "BUSINESS_MANAGER" ||
-    userData.userType == "LISTING_MANAGER"
-  ) {
+  if (["BUSINESS_MANAGER","LISTING_MANAGER"].includes(userData.userType)) {
     payload.assetId = userData.roles?.assetId;
   }
-  if (userData.platform == "apps") {
+  if(["apps","APPS_USER"].includes(userData.platform)) {
     payload.email = userData.email
     payload.phoneNumber = userData.phoneNumber
   }

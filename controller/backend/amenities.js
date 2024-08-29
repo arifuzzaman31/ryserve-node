@@ -13,9 +13,9 @@ exports.create_amenity = asyncHandler(async (req, res) => {
         status: data.status == "true" ? true : false,
       },
     });
-    res.status(200).send(amenities);
+    return res.status(200).send(amenities);
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });
 
@@ -74,11 +74,14 @@ exports.get_amenity = asyncHandler(async (req, res) => {
 exports.delete_amenity = asyncHandler(async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const amenities = await prisma.amenities.delete({
+    const amenities = await prisma.amenities.update({
       where: {
-        id: id,
+          id: id
       },
-    });
+      data:{
+          deleted: new Date()
+      }
+  });
     res.status(200).send(amenities);
   } catch (error) {
     res.status(400).send(error);

@@ -30,7 +30,7 @@ exports.create_emp_own = asyncHandler(async (req, res, next) => {
     const employee = await prisma.Owner.create({
         data: preperData
     });
-    res.status(200).send(employee);
+    return res.status(200).send(employee);
 });
 
 exports.emp_list = asyncHandler(async (req, res, next) => {
@@ -86,9 +86,9 @@ exports.emp_get = asyncHandler(async (req, res, next) => {
                 id: id
             }
         })
-        res.status(200).send(employee);
+        return res.status(200).send(employee);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 });
 
@@ -107,22 +107,25 @@ exports.emp_update = asyncHandler(async (req, res, next) => {
                 phoneNumber: phoneNumber
             }
         });
-        res.status(200).send(employee);
+        return res.status(200).send(employee);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 });
 
 exports.delete_emp = asyncHandler(async (req, res, next) => {
     const id = parseInt(req.params.id, 10);
     try {
-        const employee = await prisma.Owner.delete({
+        const employee = await prisma.Owner.update({
             where: {
                 id: id
+            },
+            data:{
+                deleted: new Date()
             }
         });
-        res.status(200).send(employee);
+        return res.status(200).send(employee);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 });

@@ -27,9 +27,9 @@ exports.create_asset = asyncHandler(async (req, res) => {
                 status: data.status == "true" ? true : false
             }
         })
-        res.status(200).send(asset);
+        return  res.status(200).send(asset);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 })
 
@@ -68,7 +68,7 @@ exports.asset_list = asyncHandler(async (req, res) => {
         })
     ]);
 
-    res.status(200).send({
+    return res.status(200).send({
         pagination: {
             total: Math.ceil(count / perPg)
         },
@@ -90,7 +90,7 @@ exports.asset_get = asyncHandler(async (req, res) => {
             }
         }
     })
-    res.status(200).send(assets);
+    return res.status(200).send(assets);
 })
 
 exports.asset_update = asyncHandler(async (req, res) => {
@@ -116,17 +116,20 @@ exports.asset_update = asyncHandler(async (req, res) => {
                 status: data.status == "true" ? true : false
             }
         });
-        res.status(201).send(asset);
+        return res.status(201).send(asset);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 })
 exports.delete_asset = asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
-    const asset = await prisma.asset.delete({
+    const asset = await prisma.asset.update({
         where: {
             id: id
+        },
+        data:{
+            deleted: new Date()
         }
     });
-    res.status(200).send(asset);
+    return res.status(200).send(asset);
 })

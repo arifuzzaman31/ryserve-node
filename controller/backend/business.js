@@ -34,9 +34,9 @@ exports.create_business = asyncHandler(async (req, res) => {
                 status: data.status == "true" ? true : false
             }
         });
-        res.status(200).send(business);
+        return res.status(200).send(business);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 })
 
@@ -74,7 +74,7 @@ exports.business_list = asyncHandler(async (req, res) => {
         })
     ]);
 
-    res.status(200).send({
+    return res.status(200).send({
         pagination: {
             total: Math.ceil(count / perPg)
         },
@@ -92,7 +92,7 @@ exports.business_get = asyncHandler(async (req, res) => {
             owner: { select: { id: true, name: true, email: true } }
         }
     })
-    res.status(200).send(business);
+    return res.status(200).send(business);
 })
 
 exports.business_update = asyncHandler(async (req, res) => {
@@ -125,17 +125,20 @@ exports.business_update = asyncHandler(async (req, res) => {
                 status: data.status == 'true' ? true : false
             }
         });
-        res.status(200).send(business);
+        return res.status(200).send(business);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 })
 exports.delete_business = asyncHandler(async (req, res, next) => {
     const id = parseInt(req.params.id, 10);
-    const business = await prisma.business.delete({
+    const business = await prisma.business.update({
         where: {
             id: id
+        },
+        data:{
+            deleted: new Date()
         }
     });
-    res.status(200).send(business);
+    return res.status(200).send(business);
 })

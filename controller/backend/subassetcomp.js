@@ -73,9 +73,9 @@ exports.create_subassetcomp = asyncHandler(async (req, res) => {
       }
       return subassetComp;
     });
-    res.status(200).send(result);
+    return res.status(200).send(result);
   } catch (error) {
-    res.status(500).send(error.message);
+    return res.status(500).send(error.message);
   }
 });
 
@@ -127,7 +127,7 @@ exports.subassetcomp_list = asyncHandler(async (req, res) => {
     }),
   ]);
 
-  res.status(200).send({
+  return res.status(200).send({
     pagination: {
       total: Math.ceil(count / perPg),
     },
@@ -146,7 +146,7 @@ exports.get_subassetcomp = asyncHandler(async (req, res) => {
       owner: { select: { id: true, name: true } },
     },
   });
-  res.status(200).send(subassetcomp);
+  return res.status(200).send(subassetcomp);
 });
 
 exports.subassetcomp_update = asyncHandler(async (req, res) => {
@@ -255,17 +255,20 @@ exports.subassetcomp_update = asyncHandler(async (req, res) => {
       }
       return subassetComp;
     });
-    res.status(201).send(result);
+    return res.status(201).send(result);
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });
 exports.delete_subassetcomp = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const subassetcomp = await prisma.SubAssetComponent.delete({
+  const subassetcomp = await prisma.SubAssetComponent.update({
     where: {
-      id: id,
+        id: id
     },
-  });
-  res.status(200).send(subassetcomp);
+    data:{
+        deleted: new Date()
+    }
+});
+  return res.status(200).send(subassetcomp);
 });

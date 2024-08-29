@@ -12,5 +12,5 @@ app.use('/api/backend', adminRoute);
 app.use('/api', [authRoute, userRoute]);
 
 app.listen(port,() => {
-    console.log(`apps running on ${port}`);
+    console.log(`reserve running on ${port}`);
 })

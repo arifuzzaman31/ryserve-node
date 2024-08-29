@@ -17,9 +17,9 @@ exports.create_table = asyncHandler(async (req, res) => {
         status: true,
       },
     });
-    res.status(200).send(table);
+    return res.status(200).send(table);
   } catch (error) {
-    res.status(400).send(error.message);
+    return res.status(400).send(error.message);
   }
 });
 
@@ -44,9 +44,9 @@ exports.table_list = asyncHandler(async (req, res) => {
         },
       },
     });
-    res.status(200).send(tables);
+    return res.status(200).send(tables);
   } catch (error) {
-    res.status(500).send(error.message);
+    return res.status(500).send(error.message);
   }
 });
 
@@ -66,7 +66,7 @@ exports.get_table = asyncHandler(async (req, res) => {
       },
     },
   });
-  res.status(200).send(table);
+  return res.status(200).send(table);
 });
 
 exports.table_update = asyncHandler(async (req, res) => {
@@ -88,17 +88,20 @@ exports.table_update = asyncHandler(async (req, res) => {
         status: data.status == 'true' ? true : false
       },
     });
-    res.status(201).send(table);
+    return res.status(201).send(table);
   } catch (error) {
-    res.status(400).send(error);
+    return res.status(400).send(error);
   }
 });
 exports.delete_table = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const table = await prisma.table.delete({
+  const table = await prisma.table.update({
     where: {
-      id: id,
+        id: id
     },
-  });
-  res.status(200).send(table);
+    data:{
+        deleted: new Date()
+    }
+});
+  return res.status(200).send(table);
 });

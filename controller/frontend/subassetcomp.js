@@ -34,7 +34,7 @@ exports.subassetcomp_list = asyncHandler(async (req, res) => {
             }
         },
     });
-    res.status(200).send(subassetComp);
+    return res.status(200).send(subassetComp);
 });
 
 exports.get_subassetcomp = asyncHandler(async (req, res) => {
@@ -61,5 +61,5 @@ exports.get_subassetcomp = asyncHandler(async (req, res) => {
             tables: { select: { id: true, type: true, capacity: true, position: true, size: true } }
         }
     });
-    res.status(200).send(subassetcomp);
+    return res.status(200).send(subassetcomp);
 });

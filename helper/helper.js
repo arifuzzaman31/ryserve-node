@@ -48,6 +48,27 @@ const runSMSservice = async (message,phone_number) => {
         return send_sms_api;
 }
 
+const formattedDate = async(date) => {
+    const inputDate = new Date(date);
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const day = inputDate.getUTCDate();
+    const monthIndex = inputDate.getUTCMonth();
+    const year = inputDate.getUTCFullYear();
+    return `${day}-${months[monthIndex]}-${year}`;
+}
+
+const  formatDate = (dateString) => { // Jul 3
+    const date = new Date(dateString);
+    const options = { month: 'short', day: 'numeric' };
+    return date.toLocaleDateString('en-US', options);
+}
+
+const formatDateWithDayName = (dateString) => {
+    const date = new Date(dateString);
+    const options = { weekday: 'short' };
+    return date.toLocaleDateString('en-US', options);
+}
+
 module.exports = {
-    bcryptHash,hashCheck,slugify,runSMSservice
+    bcryptHash,hashCheck,slugify,runSMSservice,formattedDate,formatDate,formatDateWithDayName
 }

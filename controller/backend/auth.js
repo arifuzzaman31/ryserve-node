@@ -2,6 +2,7 @@ const asyncHandler = require("express-async-handler");
 const prisma = require("../../db/prisma");
 const helper = require("../../helper/helper");
 const authService = require("../../services/auth")
+const ownerService = require("../../services/ownerService")
 
 exports.attempt_to_login = asyncHandler(async (req, res, next) => {
   const { email, password } = req.body;
@@ -27,8 +28,21 @@ exports.attempt_to_login = asyncHandler(async (req, res, next) => {
     const permUser = await authService.permissionSetter(user)
     const token = await authService.generateUserToken({ ...permUser, ...{ platform: "DASHBOARD_USER" } })
     const tokenUser = { user, ...{ token: token } };
-    res.status(200).send(tokenUser);
+    return res.status(200).send(tokenUser);
   } catch (error) {
-    res.status(401).send(error);
+    return res.status(401).send(error);
   }
 });
+
+exports.auth_me = asyncHandler(async(req,res) => {
+  const info = await authService.userByToken(req.headers['authorization'])
+  if(info){
+       return res.status(200).send(info);
+  }
+   return res.status(401).send({status:false, message: 'Invalid User' });
+})
+
+exports.all_permission = asyncHandler(async(req,res) => {
+  const permission = await ownerService.allPermission()
+  return res.status(200).send(permission);
+})

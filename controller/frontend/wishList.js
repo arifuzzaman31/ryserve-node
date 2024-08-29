@@ -3,7 +3,7 @@ const prisma = require("../../db/prisma");
 
 exports.add_to_wishList = asyncHandler(async (req, res) => {
     try {
-        const data = request.body
+        const data = await req.body
         const wishList = await prisma.wishList.create({
             data: {
                 userId: request.user.id,
@@ -12,9 +12,9 @@ exports.add_to_wishList = asyncHandler(async (req, res) => {
                 status: data.status == 'true' ? true : false
             },
         });
-        return wishList;
+        return res.status(200).send(wishList);
     } catch (error) {
-        console.log('Error creating Wishlist:', error);
+        return res.status(500).send(error.message);
     }
 })
 
@@ -23,7 +23,7 @@ exports.get_all_wishList = asyncHandler(async (req, res) => {
         where: {
             wishLists: {
                 some: {
-                    userId: user.id
+                    userId: req.user.id
                 }
             }
         },
@@ -33,18 +33,18 @@ exports.get_all_wishList = asyncHandler(async (req, res) => {
             }
         }
     });
-    return subassetComp;
+    return res.status(200).send(subassetComp);
 })
 
 exports.destroy_wishList = asyncHandler(async (req, res) => {
-    const { id } = request.query
+    const { id } = await req.query
     const wishList = await prisma.wishList.deleteMany({
         where: {
             AND: [
-                { userId: request.user.id },
+                { userId: req.user.id },
                 { subAssetComponentId: id },
             ]
         }
     })
-    return wishList;
+    return res.status(200).send(wishList);
 })

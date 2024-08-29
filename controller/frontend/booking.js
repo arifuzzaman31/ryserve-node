@@ -43,14 +43,15 @@ exports.create_booking = asyncHandler(async (req, res) => {
         if (data.seatBedId) {
             bookingData.seatBed = { connect: { id: data.seatBedId } };
         }
-        // return bookingData;
         const booking = await prisma.Booking.create({
             data: bookingData
         });
         if (booking) {
             let phone_number = "88" + req.user?.phoneNumber;
             let message = `Your reservation is pending confirmation from ${property.listingName}.\nFor support, contact 01923283543`;
-            await helper.runSMSservice(encodeURI(message), phone_number)
+            if(process.env.SMS_TO_USER) {
+                await helper.runSMSservice(encodeURI(message), phone_number)
+            }
             await prisma.Asset.update({
                 where: { id: property.assetId },
                 data: {
@@ -60,9 +61,9 @@ exports.create_booking = asyncHandler(async (req, res) => {
                 }
             });
         }
-        res.status(200).send(booking);
+        return res.status(200).send(booking);
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).send(error.message);
     }
 })
 
@@ -72,7 +73,8 @@ exports.booking_list = asyncHandler(async (req, res) => {
         skip: Number(from) ? Number(from) : 0,
         take: Number(to) ? Number(to) : 5,
         where: {
-            customerId: req.user.id
+            customerId: req.user.id,
+            deleted : null
         },
         orderBy: {
             createdAt: 'desc',
@@ -100,7 +102,7 @@ exports.booking_list = asyncHandler(async (req, res) => {
             }
         }
     })
-    res.status(200).send(bookings);
+    return res.status(200).send(bookings);
 })
 
 exports.get_booking = asyncHandler(async (req, res) => {
@@ -113,7 +115,7 @@ exports.get_booking = asyncHandler(async (req, res) => {
             table: true
         },
     })
-    res.status(200).send(booking);
+    return res.status(200).send(booking);
 })
 
 exports.update_booking = asyncHandler(async (req, res) => {
@@ -132,7 +134,9 @@ exports.update_booking = asyncHandler(async (req, res) => {
         })
         const prepareData = {};
         prepareData.startDate = data.startDate ? new Date(data.startDate) : prevasset.startDate,
-            prepareData.endDate = data.endDate ? new Date(data.endDate) : prevasset.endDate;
+        prepareData.endDate = data.endDate ? new Date(data.endDate) : prevasset.endDate;
+        prepareData.slot = data.slot ?? prevasset.slot;
+        prepareData.guestNumber = data.guestNumber ?? prevasset.guestNumber;
         if (data.tableId) {
             prepareData.tableId = data.tableId
         }
@@ -146,13 +150,17 @@ exports.update_booking = asyncHandler(async (req, res) => {
             if (data.slot != prevasset.slot) {
                 let phone_number = "88" + req.user.phoneNumber;
                 let message = `Your reservation slot is updated from ${prevasset.slot} to ${data.slot}.\nFor support, contact 01923283543`;
-                await helper.runSMSservice(encodeURI(message), phone_number)
+                if(process.env.SMS_TO_USER) {
+                    await helper.runSMSservice(encodeURI(message), phone_number)
+                }
             }
-            // const notifyOwner = await helper.runSMSservice("Ryservation Updated By Customer.","88"+prevasset.owner?.phoneNumber)
+            if(process.env.SMS_TO_OWNER) {
+                await helper.runSMSservice("Ryservation Updated By Customer.","88"+prevasset.owner?.phoneNumber)
+            }
         }
-        res.status(200).send(booking);
+        return res.status(200).send(booking);
     } catch (error) {
-        res.status(500).send(error.message);
+        return res.status(500).send(error.message);
     }
 })
 
@@ -163,5 +171,5 @@ exports.delete_booking = asyncHandler(async (req, res) => {
             id: id
         }
     });
-    res.status(200).send(booking);
+    return res.status(200).send(booking);
 })

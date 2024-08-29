@@ -15,9 +15,9 @@ exports.create_subasset = asyncHandler(async (req, res) => {
                 status: data.status == 'true' ? true : false
             }
         })
-        res.status(200).send(subasset);
+        return res.status(200).send(subasset);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 })
 
@@ -59,14 +59,14 @@ exports.subasset_list = asyncHandler(async (req, res) => {
             })
         ]);
 
-        res.status(200).send({
+        return res.status(200).send({
             pagination: {
                 total: Math.ceil(count / perPg)
             },
             data: subassets
         });
     } catch (error) {
-        res.status(400).send(error)
+        return res.status(400).send(error)
     }
 })
 
@@ -80,7 +80,7 @@ exports.get_subasset = asyncHandler(async (req, res) => {
             asset: { select: { id: true, propertyName: true } }
         }
     })
-    res.status(200).send(subasset);
+    return res.status(200).send(subasset);
 })
 
 exports.subasset_update = asyncHandler(async (req, res) => {
@@ -100,17 +100,20 @@ exports.subasset_update = asyncHandler(async (req, res) => {
                 status: data.status == 'true' ? true : false
             }
         });
-        res.status(201).send(asset);
+        return res.status(201).send(asset);
     } catch (error) {
-        res.status(400).send(error);
+        return res.status(400).send(error);
     }
 })
 exports.delete_subasset = asyncHandler(async (req, res) => {
     const id = parseInt(req.params.id, 10);
-    const subasset = await prisma.SubAsset.delete({
+    const subasset = await prisma.SubAsset.update({
         where: {
             id: id
+        },
+        data:{
+            deleted: new Date()
         }
     });
-    res.status(200).send(subasset);
+    return res.status(200).send(subasset);
 })

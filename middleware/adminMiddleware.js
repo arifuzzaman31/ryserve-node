@@ -6,15 +6,14 @@ const verifyToken = async (req, res, next) => {
     if (typeof token !== 'undefined') {
       jwt.verify(token.split(' ')[1], secretKey, (err, decoded) => {
         if (err) {
-          res.status(403).send('Invalid token');
+          return res.status(403).send('Invalid token');
         } else {
           req.user = decoded;
-          // console.log(decoded.userType)
           next();
         }
       });
     } else {
-      res.status(401).send('Unauthorized');
+      return res.status(401).send('Unauthorized');
     }
   }
 module.exports = verifyToken

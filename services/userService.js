@@ -66,7 +66,7 @@ const find_or_createUser = async (requestData) => {
     await setSessionData(tokenUser)
     const createdDate = new Date(user.createdAt);
     const tday = new Date();
-    if (createdDate.toDateString() === tday.toDateString()) { // Check if createdAt is today
+    if (createdDate.toDateString() === tday.toDateString()) {
         let phone_number = "88" + user.phoneNumber;
         let message = `Your account has been created Successfully, Thank You. \n\nRYSERVED`;
         await helper.runSMSservice(encodeURI(message),phone_number)
@@ -116,7 +116,9 @@ const find_or_createUser = async (requestData) => {
       });
       return existSession;
   }
-
+const appsTerms = async() => {
+  return "Write here terms and condition"
+}
 module.exports = {
-    get_user,find_or_createUser,sendOtp,userUpdate,setSessionData,clearSession
+    get_user,find_or_createUser,sendOtp,userUpdate,setSessionData,clearSession,appsTerms
 }
