@@ -2,6 +2,7 @@ const express = require("express");
 const routes = express.Router();
 const userauth_controller = require("../controller/frontend/auth");
 const booking_controller = require("../controller/frontend/booking");
+const wishlist_controller = require("../controller/frontend/wishList");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 routes.post("/auth/login", userauth_controller.otp_login);
@@ -19,5 +20,10 @@ routes
     .get(booking_controller.get_booking)
     .put(booking_controller.update_booking)
     .delete(booking_controller.delete_booking);
+routes.route("/wishlist")
+    .all(adminMiddleware)
+    .post(wishlist_controller.add_to_wishList)
+    .get(wishlist_controller.get_all_wishList)
+    .delete(wishlist_controller.destroy_wishList);
 
 module.exports = routes;
