@@ -18,7 +18,7 @@ exports.create_cuisine = asyncHandler(async (req, res) => {
 });
 
 exports.cuisine_list = asyncHandler(async (req, res) => {
-  const { status } = req;
+  const { status } = await req.query;
   let where = {};
   if (status) {
     where = {
