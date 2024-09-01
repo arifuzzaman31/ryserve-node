@@ -11,6 +11,11 @@ app.use(express.json());
 app.use('/api/backend', adminRoute);
 app.use('/api', [authRoute, userRoute]);
 
+app.get("/info",async(req,res) => {
+    res.status(200).send('running on')
+    return ;
+});
+
 app.listen(port,() => {
     console.log(`reserve running on ${port}`);
 })
