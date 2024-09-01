@@ -4,18 +4,22 @@ const prisma = require("../../db/prisma");
 exports.create_amenity = asyncHandler(async (req, res) => {
   const data = await req.body;
   try {
-    // return data;
-    const amenities = await prisma.amenities.create({
-      data: {
-        name: data.name,
-        icon: data.icon,
-        price: Number(data.price),
-        status: data.status == "true" ? true : false,
-      },
+    const result = await prisma.$transaction(async (prisma) => {
+      const amenities = await prisma.amenities.create({
+        data: {
+          name: data.name,
+          icon: data.icon,
+          price: Number(data.price),
+          status: data.status == "true" ? true : false,
+        },
+      });
+      return amenities;
     });
-    return res.status(200).send(amenities);
+    return res.status(200).send(result);
   } catch (error) {
     return res.status(400).send(error);
+  } finally {
+    await prisma.$disconnect();
   }
 });
 
@@ -40,20 +44,25 @@ exports.update_amenity = asyncHandler(async (req, res) => {
   const data = await req.body;
   const id = parseInt(req.params.id, 10);
   try {
-    const amenity = await prisma.amenities.update({
-      where: {
-        id: id
-      },
-      data: {
-        name: data.name,
-        icon: data.icon,
-        price: Number(data.price),
-        status: data.status == "true" ? true : false,
-      },
+    const result = await prisma.$transaction(async (prisma) => {
+      const amenity = await prisma.amenities.update({
+        where: {
+          id: id,
+        },
+        data: {
+          name: data.name,
+          icon: data.icon,
+          price: Number(data.price),
+          status: data.status == "true" ? true : false,
+        },
+      });
+      return amenity
     });
-    res.status(200).send(amenity);
+    res.status(200).send(result);
   } catch (error) {
     res.status(400).send(error);
+  } finally {
+    await prisma.$disconnect();
   }
 });
 
@@ -74,16 +83,21 @@ exports.get_amenity = asyncHandler(async (req, res) => {
 exports.delete_amenity = asyncHandler(async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);
-    const amenities = await prisma.amenities.update({
-      where: {
-          id: id
-      },
-      data:{
-          deleted: new Date()
-      }
-  });
-    res.status(200).send(amenities);
+    const result = await prisma.$transaction(async (prisma) => {
+      const amenities = await prisma.amenities.update({
+        where: {
+          id: id,
+        },
+        data: {
+          deleted: new Date(),
+        },
+      });
+      return amenities;
+    });
+    res.status(200).send(result);
   } catch (error) {
     res.status(400).send(error);
+  } finally {
+    await prisma.$disconnect();
   }
 });
