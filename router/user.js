@@ -7,7 +7,7 @@ routes.get("/sub-asset-component", subassetcomp_controller.subassetcomp_list);
 routes.get("/sub-asset-component/:id", subassetcomp_controller.get_subassetcomp);
 routes.get("/cuisine", cuisine_controller.cuisine_list);
 routes.get("/info",async(req,res) => {
-    res.status(200).send(window.location.host)
+    res.status(200).send('running on : '+window.location.host)
     return ;
 });
 
