@@ -76,6 +76,8 @@ exports.create_subassetcomp = asyncHandler(async (req, res) => {
     return res.status(200).send(result);
   } catch (error) {
     return res.status(500).send(error.message);
+  } finally {
+    await prisma.$disconnect();
   }
 });
 
@@ -258,17 +260,19 @@ exports.subassetcomp_update = asyncHandler(async (req, res) => {
     return res.status(201).send(result);
   } catch (error) {
     return res.status(400).send(error);
+  } finally {
+    await prisma.$disconnect();
   }
 });
 exports.delete_subassetcomp = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
   const subassetcomp = await prisma.SubAssetComponent.update({
     where: {
-        id: id
+      id: id,
     },
-    data:{
-        deleted: new Date()
-    }
-});
+    data: {
+      deleted: new Date(),
+    },
+  });
   return res.status(200).send(subassetcomp);
 });

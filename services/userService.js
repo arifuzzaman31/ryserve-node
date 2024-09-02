@@ -45,33 +45,36 @@ const find_or_createUser = async (requestData) => {
   }
 
   const userUpdate = async(userData,userId) => {
-    const user = await prisma.user.update({
-      where: {
-        id: userId
-      },
-      data:{
-        firstName: userData.firstName,
-        lastName : userData.lastName,
-        name : userData.firstName+' '+userData.lastName,
-        email : userData.email,
-        birthDate: userData.birthDate ? new Date(userData.birthDate) : null,
-        status : true,
-        otp : null,
-        isVerify : true,
-        otpExpireAt : null
+    const result = await prisma.$transaction(async (prisma) => {
+      const user = await prisma.user.update({
+        where: {
+          id: userId
+        },
+        data:{
+          firstName: userData.firstName,
+          lastName : userData.lastName,
+          name : userData.firstName+' '+userData.lastName,
+          email : userData.email,
+          birthDate: userData.birthDate ? new Date(userData.birthDate) : null,
+          status : true,
+          otp : null,
+          isVerify : true,
+          otpExpireAt : null
+        }
+      });
+      const dt = await authService.generateUserToken({...user,...{platform:userData.platform}})
+      const tokenUser = {user, ...{token:dt}};
+      await setSessionData(tokenUser)
+      const createdDate = new Date(user.createdAt);
+      const tday = new Date();
+      if (createdDate.toDateString() === tday.toDateString()) {
+          let phone_number = "88" + user.phoneNumber;
+          let message = `Your account has been created Successfully, Thank You. \n\nRYSERVED`;
+          await helper.runSMSservice(encodeURI(message),phone_number)
       }
+      return tokenUser;
     });
-    const dt = await authService.generateUserToken({...user,...{platform:userData.platform}})
-    const tokenUser = {user, ...{token:dt}};
-    await setSessionData(tokenUser)
-    const createdDate = new Date(user.createdAt);
-    const tday = new Date();
-    if (createdDate.toDateString() === tday.toDateString()) {
-        let phone_number = "88" + user.phoneNumber;
-        let message = `Your account has been created Successfully, Thank You. \n\nRYSERVED`;
-        await helper.runSMSservice(encodeURI(message),phone_number)
-    }
-    return tokenUser;
+    return result;
   }
 
  const setSessionData = async(userData) => {
@@ -79,12 +82,13 @@ const find_or_createUser = async (requestData) => {
      date.setDate(date.getDate() + 365)
     const isoDateString = date.toISOString();
     const existSession = await prisma.session.findFirst({
-        where: {
-          userId: userData.user.id
-        }
-      });
-      let session;
-      if(existSession){
+      where: {
+        userId: userData.user.id
+      }
+    });
+    let session;
+    const result = await prisma.$transaction(async (prisma) => {
+    if(existSession){
         session = await prisma.session.update({
           where: {
             id: existSession.id,
@@ -106,6 +110,8 @@ const find_or_createUser = async (requestData) => {
         });
       }
       return session;
+    });
+    return result;
   }
  const clearSession = async(userData) => {
     const existSession = await prisma.session.deleteMany({

@@ -17,7 +17,7 @@ exports.create_amenity = asyncHandler(async (req, res) => {
     });
     return res.status(200).send(result);
   } catch (error) {
-    return res.status(400).send(error);
+    return res.status(400).send(error.message);
   } finally {
     await prisma.$disconnect();
   }
@@ -60,7 +60,7 @@ exports.update_amenity = asyncHandler(async (req, res) => {
     });
     res.status(200).send(result);
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400).send(error.message);
   } finally {
     await prisma.$disconnect();
   }
