@@ -1,22 +1,21 @@
 const express = require('express');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const adminRoute = require('./router/admin');
 const authRoute = require('./router/authRoute');
 const userRoute = require('./router/user');
 dotenv.config();
 const app = express();
-const port = process.env.PORT;
-app.use((req, res, next) => {
+app.use(cors());
+app.all('*', function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header(
-      "Access-Control-Allow-Headers",
-      "Authorization, X-API-KEY, Origin, X-Requested-With, Content-Type, Accept, Access-Control-Allow-Request-Method"
-    );
-    res.header("Access-Control-Allow-Methods", "GET, POST, PATCH, OPTIONS, PUT, DELETE");
-    res.header("Allow", "GET, POST, OPTIONS, PATCH, PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "X-Requested-With");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
-})
+});
+const port = process.env.PORT;
 app.use(express.json());
+
 app.use('/api/backend', adminRoute);
 app.use('/api', [authRoute, userRoute]);
 
