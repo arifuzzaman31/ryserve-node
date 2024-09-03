@@ -46,7 +46,7 @@ exports.subasset_list = asyncHandler(async (req, res) => {
     where.assetId = req.user.roles.assetId;
   }
   if (assetId != "") {
-    where = {assetId:assetId}
+    where = {assetId:Number(assetId)}
   }
   // return dataId
   try {
