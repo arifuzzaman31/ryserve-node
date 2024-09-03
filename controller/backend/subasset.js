@@ -39,14 +39,14 @@ exports.subasset_list = asyncHandler(async (req, res) => {
       },
     };
   }
-  if (assetId != "") {
-    where.assetId = assetId;
-  }
   if (
     req.user.userType == "BUSINESS_MANAGER" ||
     req.user.userType == "LISTING_MANAGER"
   ) {
     where.assetId = req.user.roles.assetId;
+  }
+  if (assetId != "") {
+    where = {assetId:assetId}
   }
   // return dataId
   try {
