@@ -146,6 +146,8 @@ exports.get_subassetcomp = asyncHandler(async (req, res) => {
     include: {
       asset: { select: { id: true, propertyName: true } },
       owner: { select: { id: true, name: true } },
+      tables: { select: { id: true, subAssetCompId: true,type: true,capacity: true,position: true,size: true,splitable: true,ryservable: true,status:true } },
+      prices: true,
     },
   });
   return res.status(200).send(subassetcomp);
