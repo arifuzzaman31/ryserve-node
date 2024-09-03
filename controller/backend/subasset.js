@@ -74,7 +74,7 @@ exports.subasset_list = asyncHandler(async (req, res) => {
       data: subassets,
     });
   } catch (error) {
-    return res.status(400).send(error);
+    return res.status(400).send(error.message);
   }
 });
 
