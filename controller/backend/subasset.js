@@ -30,7 +30,7 @@ exports.subasset_list = asyncHandler(async (req, res) => {
   const dataId = await ownerService.propertyBy(req.user);
   const { pageNo, perPage, assetId } = req.query;
   let where = {};
-  if (dataId != "all") {
+  if (dataId !== "all") {
     where = {
       asset: {
         business: {
@@ -43,19 +43,20 @@ exports.subasset_list = asyncHandler(async (req, res) => {
     req.user.userType == "BUSINESS_MANAGER" ||
     req.user.userType == "LISTING_MANAGER"
   ) {
-    where.assetId = req.user.roles.assetId;
+    where.assetId = req.user.assetId;
   }
-  if (assetId != "") {
+  if (assetId) {
     where = {assetId:Number(assetId)}
   }
-  // return dataId
+  // return res.send(where)
   try {
     const perPg = perPage ? Number(perPage) : 10;
-    const from = Number(pageNo * perPg) - Number(perPg);
+    const pgNo = pageNo ? Number(pageNo) : 1;
+    const from = Number(pgNo * perPg) - Number(perPg);
     const [count, subassets] = await prisma.$transaction([
       prisma.SubAsset.count({ where }),
       prisma.SubAsset.findMany({
-        skip: pageNo ? from : 0,
+        skip: pgNo ? from : 0,
         take: perPg,
         where,
         orderBy: {

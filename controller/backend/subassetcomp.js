@@ -123,8 +123,8 @@ exports.subassetcomp_list = asyncHandler(async (req, res) => {
         reservationCategory: true,
         status: true,
         asset: { select: { id: true, propertyName: true } },
-        tables: true,
-        prices: true,
+        // tables: true,
+        // prices: true,
       },
     }),
   ]);
@@ -147,7 +147,7 @@ exports.get_subassetcomp = asyncHandler(async (req, res) => {
       asset: { select: { id: true, propertyName: true } },
       owner: { select: { id: true, name: true } },
       tables: { select: { id: true, subAssetCompId: true,type: true,capacity: true,position: true,size: true,splitable: true,ryservable: true,status:true } },
-      prices: true,
+      prices: true
     },
   });
   return res.status(200).send(subassetcomp);
