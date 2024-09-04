@@ -46,15 +46,15 @@ exports.create_business = asyncHandler(async (req, res) => {
 });
 
 exports.business_list = asyncHandler(async (req, res) => {
-  const { pageNo, perPage } = req.query;
+  const { pageNo, perPage } = await req.query;
   const dataId = await ownerService.propertyBy(req.user);
   let where = {};
   if (dataId != "all") {
     where.ownerId = dataId;
   }
-  // if ((user.userType == 'BUSINESS_MANAGER') || (user.userType == 'LISTING_MANAGER')) {
-  //     where.ownerId = user.roles.assetId
-  // }
+  if (req.user.userType.includes(['BUSINESS_MANAGER','LISTING_MANAGER'])) {
+      where.ownerId = await req.user.assetId
+  }
   // return dataId
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
@@ -67,15 +67,12 @@ exports.business_list = asyncHandler(async (req, res) => {
       orderBy: {
         createdAt: "desc",
       },
-      include: {
+      select:{
+        id:true,businessName:true,id:true,businessType:true,serviceType:true,businessCategory:true,city:true,status:true,
         owner: {
-          select: {
-            id: true,
-            name: true,
-            email: true,
-          },
-        },
-      },
+          select: {id: true,name: true,email: true}
+        }
+      }
     }),
   ]);
 

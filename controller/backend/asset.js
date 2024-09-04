@@ -68,11 +68,12 @@ exports.asset_list = asyncHandler(async (req, res) => {
       orderBy: {
         createdAt: "desc",
       },
-      include: {
+      select:{
+        id:true,propertyName:true,assetType:true,city:true,area:true,bookingCount:true,status:true,
         business: {
           select: { id: true, businessName: true },
         },
-      },
+      }
     }),
   ]);
 
@@ -86,7 +87,7 @@ exports.asset_list = asyncHandler(async (req, res) => {
 
 exports.asset_get = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const assets = await prisma.asset.findMany({
+  const assets = await prisma.asset.findFirst({
     where: {
       id: id,
     },

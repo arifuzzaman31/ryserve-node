@@ -11,7 +11,7 @@ exports.create_emp_own = asyncHandler(async (req, res, next) => {
     name: data.name,
     email: data.email,
     userType: data.userType,
-    birthDate: new Date(data.birthDate),
+    birthDate: data.birthDate ? new Date(data.birthDate): new Date(),
     country: data.country,
     city: data.city,
     phoneNumber: data.phoneNumber,
@@ -42,14 +42,16 @@ exports.create_emp_own = asyncHandler(async (req, res, next) => {
   }
 });
 
-exports.emp_list = asyncHandler(async (req, res, next) => {
-  const { pageNo, perPage, vendor } = req.query;
-  // const dataId = await ownerService.propertyBy(req.user)
-  let where = {};
-  // if(dataId != 'all'){
-  // where.ownerId = dataId
-  // }
-  if (vendor == "yes") {
+exports.emp_list = asyncHandler(async (req, res) => {
+  const { pageNo, perPage, vendor } = await req.query;
+  const dataId = await ownerService.propertyBy(req.user);
+  const where = {};
+
+  if (dataId !== "all") {
+    where.ownerId = dataId;
+  }
+
+  if (vendor === "yes") {
     where.userType = "BUSINESS_OWNER";
   } else {
     where.userType = {
@@ -58,6 +60,7 @@ exports.emp_list = asyncHandler(async (req, res, next) => {
   }
   const perPg = perPage ? Number(perPage) : 10;
   const from = Number(pageNo * perPg) - Number(perPg);
+
   const [count, employee] = await prisma.$transaction([
     prisma.Owner.count({
       where,
@@ -66,16 +69,17 @@ exports.emp_list = asyncHandler(async (req, res, next) => {
       skip: pageNo ? from : 0,
       take: perPg,
       where,
-      include: {
-        roles: {
-          include: {
-            asset: { select: { id: true, propertyName: true } },
-          },
-        },
-      },
       orderBy: {
         createdAt: "desc",
       },
+      select:{
+        id:true,name:true,email:true,phoneNumber:true,userType:true,status:true,
+        roles:{select:{
+          id:true,roleName:true,
+          asset: { select: { id: true, propertyName: true }
+          },
+        }}
+      }
     }),
   ]);
 
@@ -104,17 +108,27 @@ exports.emp_get = asyncHandler(async (req, res, next) => {
 exports.emp_update = asyncHandler(async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
   try {
-    const { name, email, phoneNumber } = req.body;
+    const data = await req.body;
     const result = await prisma.$transaction(async (prisma) => {
       const employee = await prisma.Owner.update({
         where: {
           id: id,
         },
         data: {
-          name: name,
-          email: email,
-          isVerify: true,
-          phoneNumber: phoneNumber,
+          name: data.name,
+          email: data.email,
+          userType: data.userType,
+          country: data.country,
+          city: data.city,
+          phoneNumber: data.phoneNumber,
+          occupation: data.occupation,
+          designation: data.designation,
+          location: data.location,
+          residenceAddress: data.residenceAddress,
+          nid: data.nid,
+          roleId: data.roleId,
+          ownerId: data.ownerId,
+          status: data.status == "true" ? true : false,
         },
       });
       return employee;
