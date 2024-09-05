@@ -75,7 +75,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
       if (booking) {
         let phone_number = "88" + phoneNumber;
         let message = "Thank you.\nYour reservation is Confirmed.";
-        if (process.env.SMS_TO_USER) {
+        if (process.env.SMS_TO_USER == 'TRUE') {
           await helper.runSMSservice(encodeURI(message), phone_number);
         }
         await prisma.Asset.update({
@@ -249,8 +249,9 @@ exports.update_booking = asyncHandler(async (req, res) => {
       }
       delete prepareData["id"];
       delete prepareData["createdAt"];
-      delete prepareData["updatedAt"];
+      delete prepareData["subAssetComponent"];
       delete prepareData["deleted"];
+      // return res.status(200).send(prepareData);
       const booking = await prisma.Booking.update({
         where: {
           id: prevasset.id,
@@ -264,13 +265,13 @@ exports.update_booking = asyncHandler(async (req, res) => {
         if (data.status == "CONFIRMED" || data.status == "CANCELED") {
           let text = data.status.toLowerCase();
           message = `Reservation under ${prevasset.customerName} at ${prevasset.subAssetComponent.listingName} is ${text} for ${customDate} at ${booking.slot}.\nFor support, contact 01923283543`;
-          if (process.env.SMS_TO_USER) {
+          if (process.env.SMS_TO_USER == 'TRUE') {
             await helper.runSMSservice(encodeURI(message), phone_number);
           }
         }
         if (data.slot != prevasset.slot) {
           message = `Your reservation slot is updated from ${prevasset.slot} to ${data.slot}.\nFor support, contact 01923283543`;
-          if (process.env.SMS_TO_USER) {
+          if (process.env.SMS_TO_USER == 'TRUE') {
             await helper.runSMSservice(encodeURI(message), phone_number);
           }
         }

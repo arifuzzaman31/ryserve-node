@@ -82,11 +82,14 @@ routes
   .get(subasset_controller.get_subasset)
   .put(subasset_controller.subasset_update)
   .delete(subasset_controller.delete_subasset);
-
-routes
-  .route("/sub-asset-component").all(adminMiddleware)
-  .get(subassetcomp_controller.subassetcomp_list)
-  .post(subassetcomp_controller.create_subassetcomp);
+  
+  routes
+    .route("/sub-asset-component").all(adminMiddleware)
+    .get(subassetcomp_controller.subassetcomp_list)
+    .post(subassetcomp_controller.create_subassetcomp);
+  routes
+    .route("/sub-asset-component-at-booking").all(adminMiddleware)
+    .get(subassetcomp_controller.subassetcomp_listwith_slot)
 
 routes
   .route("/sub-asset-component/:id").all(adminMiddleware)

@@ -68,7 +68,7 @@ exports.business_list = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
       select:{
-        id:true,businessName:true,id:true,businessType:true,serviceType:true,businessCategory:true,city:true,status:true,
+        id:true,businessName:true,businessType:true,serviceType:true,businessCategory:true,city:true,status:true,
         owner: {
           select: {id: true,name: true,email: true}
         }
@@ -86,7 +86,7 @@ exports.business_list = asyncHandler(async (req, res) => {
 
 exports.business_get = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);
-  const business = await prisma.business.findMany({
+  const business = await prisma.business.findFirst({
     where: {
       id: id,
     },

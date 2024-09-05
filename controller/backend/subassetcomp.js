@@ -136,6 +136,56 @@ exports.subassetcomp_list = asyncHandler(async (req, res) => {
     data: subassetComp,
   });
 });
+exports.subassetcomp_listwith_slot = asyncHandler(async (req, res) => {
+  const { pageNo, perPage } = req.query;
+  const dataId = await ownerService.propertyBy(req.user);
+  let where = {};
+  if (dataId != "all") {
+    where.ownerId = dataId;
+  }
+  const { keyword } = req.query;
+  if (keyword) {
+    where.listingName = {
+      contains: keyword,
+      mode: "insensitive",
+    };
+  }
+  if (
+    req.user.userType == "BUSINESS_MANAGER" ||
+    req.user.userType == "LISTING_MANAGER"
+  ) {
+    where.assetId = req.user.assetId;
+  }
+  const perPg = perPage ? Number(perPage) : 10;
+  const from = Number(pageNo * perPg) - Number(perPg);
+
+  const [count, subassetComp] = await prisma.$transaction([
+    prisma.SubAssetComponent.count({ where }),
+    prisma.SubAssetComponent.findMany({
+      skip: pageNo ? from : 0,
+      take: perPg,
+      where,
+      orderBy: {
+        createdAt: "desc",
+      },
+      select: {
+        id: true,
+        assetId: true,
+        listingName: true,
+        status: true,
+        tables: true,
+        slot:true
+      },
+    }),
+  ]);
+
+  return res.status(200).send({
+    pagination: {
+      total: Math.ceil(count / perPg),
+    },
+    data: subassetComp,
+  });
+});
 
 exports.get_subassetcomp = asyncHandler(async (req, res) => {
   const id = parseInt(req.params.id, 10);

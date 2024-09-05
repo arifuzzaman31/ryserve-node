@@ -73,7 +73,7 @@ exports.emp_list = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
       select:{
-        id:true,name:true,email:true,phoneNumber:true,userType:true,status:true,
+        id:true,name:true,email:true,phoneNumber:true,userType:true,status:true,roleId:true,
         roles:{select:{
           id:true,roleName:true,
           asset: { select: { id: true, propertyName: true }

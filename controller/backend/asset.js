@@ -69,7 +69,7 @@ exports.asset_list = asyncHandler(async (req, res) => {
         createdAt: "desc",
       },
       select:{
-        id:true,propertyName:true,assetType:true,city:true,area:true,bookingCount:true,status:true,
+        id:true,propertyName:true,businessId:true,assetType:true,city:true,area:true,bookingCount:true,status:true,
         business: {
           select: { id: true, businessName: true },
         },
