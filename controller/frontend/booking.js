@@ -50,7 +50,7 @@ exports.create_booking = asyncHandler(async (req, res) => {
       if (booking) {
         let phone_number = "88" + req.user?.phoneNumber;
         let message = `Your reservation is pending confirmation from ${property.listingName}.\nFor support, contact 01923283543`;
-        if (process.env.SMS_TO_USER == 'TRUE') {
+        if (process.env.SMS_TO_USER == 'true') {
           await helper.runSMSservice(encodeURI(message), phone_number);
         }
         await prisma.Asset.update({
@@ -174,11 +174,11 @@ exports.update_booking = asyncHandler(async (req, res) => {
         if (data.slot != prevasset.slot) {
           let phone_number = "88" + req.user.phoneNumber;
           let message = `Your reservation slot is updated from ${prevasset.slot} to ${data.slot}.\nFor support, contact 01923283543`;
-          if (process.env.SMS_TO_USER == 'TRUE') {
+          if (process.env.SMS_TO_USER == 'true') {
             await helper.runSMSservice(encodeURI(message), phone_number);
           }
         }
-        if (process.env.SMS_TO_OWNER == 'TRUE') {
+        if (process.env.SMS_TO_OWNER == 'true') {
           await helper.runSMSservice(
             "Ryservation Updated By Customer.",
             "88" + prevasset.owner?.phoneNumber
