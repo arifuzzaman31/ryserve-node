@@ -11,6 +11,6 @@ echo "Installing Dependencies..."
 npm install --yes
 
 echo "PM2 Reload"
-pm2 reload nd-ryserve
+pm2 restart nd-ryserve || pm2 restart 0
 
 echo "Deployment Finished!"
