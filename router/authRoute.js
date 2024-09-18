@@ -7,6 +7,7 @@ const adminMiddleware = require("../middleware/adminMiddleware");
 
 routes.post("/auth/login", userauth_controller.otp_login);
 routes.get("/me",adminMiddleware, userauth_controller.auth_me);
+routes.put("/user",adminMiddleware, userauth_controller.update_me);
 routes.get("/terms-condition", userauth_controller.terms_condition);
 routes
     .route("/booking")

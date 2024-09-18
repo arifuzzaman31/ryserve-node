@@ -44,7 +44,7 @@ const find_or_createUser = async (requestData) => {
         return user;
   }
 
-  const userUpdate = async(userData,userId) => {
+  const updateUserInfo = async(userData,userId) => {
     const result = await prisma.$transaction(async (prisma) => {
       const user = await prisma.user.update({
         where: {
@@ -62,6 +62,13 @@ const find_or_createUser = async (requestData) => {
           otpExpireAt : null
         }
       });
+      return user;
+    });
+    return result;
+  }
+
+  const userUpdate = async(userData,userId) => {
+      const user = await updateUserInfo(userData,userId)
       const dt = await authService.generateUserToken({...user,...{platform:userData.platform}})
       const tokenUser = {user, ...{token:dt}};
       await setSessionData(tokenUser)
@@ -73,8 +80,6 @@ const find_or_createUser = async (requestData) => {
           await helper.runSMSservice(encodeURI(message),phone_number)
       }
       return tokenUser;
-    });
-    return result;
   }
 
  const setSessionData = async(userData) => {
@@ -126,5 +131,5 @@ const appsTerms = async() => {
   return "Write here terms and condition"
 }
 module.exports = {
-    get_user,find_or_createUser,sendOtp,userUpdate,setSessionData,clearSession,appsTerms
+    get_user,find_or_createUser,sendOtp,userUpdate,updateUserInfo,setSessionData,clearSession,appsTerms
 }
