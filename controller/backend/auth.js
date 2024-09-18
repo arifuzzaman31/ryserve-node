@@ -5,7 +5,7 @@ const authService = require("../../services/auth")
 const ownerService = require("../../services/ownerService")
 
 exports.attempt_to_login = asyncHandler(async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email, password } = await req.body;
   try {
     const user = await prisma.Owner.findUnique({
       where: {
