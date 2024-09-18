@@ -6,6 +6,7 @@ const wishlist_controller = require("../controller/frontend/wishList");
 const adminMiddleware = require("../middleware/adminMiddleware");
 
 routes.post("/auth/login", userauth_controller.otp_login);
+routes.put("/auth/logout",adminMiddleware,userauth_controller.user_logout);
 routes.get("/me",adminMiddleware, userauth_controller.auth_me);
 routes.put("/user/:id",userauth_controller.update_me);
 routes.get("/terms-condition", userauth_controller.terms_condition);

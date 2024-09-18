@@ -39,7 +39,18 @@ exports.otp_login = asyncHandler(async (req, res) => {
         }
     }
 })
-
+exports.user_logout = asyncHandler(async(req, res) => {
+    try {
+        const info = await req.user;
+        if(info.email == 'user@guest.com'){
+            return res.status(200).send({status:true, message: 'Logout Successful'});
+        }
+        await userService.clearSession(info);
+        return res.status(200).send({status:true, message: 'Logout Successful'});
+    } catch (error) {
+        return res.status(400).send({status: false, error: error });
+    }
+})
 exports.auth_me = asyncHandler(async(req,res) => {
    const info = await authService.userByToken(req.headers.authorization)
    const user = await userService.get_user({id:info.id})

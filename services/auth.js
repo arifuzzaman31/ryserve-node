@@ -27,6 +27,8 @@ const userByToken = async (token) => {
   return info;
 }
 
+
+
 const permissionSetter = async (user) => {
   let permissions = null
   if ((user.userType == 'BUSINESS_OWNER') || (user.userType == 'CRM_EDITOR')) {
