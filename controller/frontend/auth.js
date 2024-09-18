@@ -50,14 +50,10 @@ exports.auth_me = asyncHandler(async(req,res) => {
 })
 
 exports.update_me = asyncHandler(async(req,res) => {
-   const info = await authService.userByToken(req.headers.authorization)
-   const user = await userService.get_user({id:info.id})
-   if(user){
-        const data = await req.body
-        const user = await userService.updateUserInfo(data,user.id)
-        return res.status(200).send(user);
-   }
-    return res.status(401).send({status:false, message: 'Invalid User' });
+    const id = parseInt(req.params.id, 10);
+    const data = await req.body
+    const user = await userService.updateUserInfo(data,id)
+    return res.status(200).send(user);
 })
 
 exports.terms_condition = asyncHandler(async(req,res) => {
