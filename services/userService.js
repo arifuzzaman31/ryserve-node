@@ -46,6 +46,7 @@ const find_or_createUser = async (requestData) => {
 
   const updateUserInfo = async(userData,userId) => {
     const result = await prisma.$transaction(async (prisma) => {
+      const username = userData.firstName ? userData.firstName +' '+userData.lastName : 'user';
       const user = await prisma.user.update({
         where: {
           id: userId
@@ -53,7 +54,7 @@ const find_or_createUser = async (requestData) => {
         data:{
           firstName: userData.firstName,
           lastName : userData.lastName,
-          name : userData.firstName+' '+userData.lastName,
+          name : username,
           email : userData.email,
           birthDate: userData.birthDate ? new Date(userData.birthDate) : null,
           residenceAddress: userData.residenceAddress ?? '-',
