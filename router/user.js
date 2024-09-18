@@ -6,8 +6,9 @@ const cuisine_controller = require("../controller/backend/cuisine");
 routes.get("/sub-asset-component", subassetcomp_controller.subassetcomp_list);
 routes.get("/sub-asset-component/:id", subassetcomp_controller.get_subassetcomp);
 routes.get("/cuisine", cuisine_controller.cuisine_list);
-routes.get("/check-cd", async(req,res) => {
-    res.status(200).send("Hello Arif");
+routes.get("/check-cd/:name", async(req,res) => {
+    const name = req.params.name
+    res.status(200).send(`Hello ${name}`);
 });
 
 module.exports = routes;
