@@ -7,7 +7,7 @@ exports.add_to_wishList = asyncHandler(async (req, res) => {
     const result = await prisma.$transaction(async (prisma) => {
       const wishList = await prisma.wishList.create({
         data: {
-          userId: request.user.id,
+          userId: req.user.id,
           type: data.type,
           subAssetComponentId: data.subAssetComponentId,
           status: data.status == "true" ? true : false,
