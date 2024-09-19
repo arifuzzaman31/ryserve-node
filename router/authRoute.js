@@ -26,6 +26,9 @@ routes.route("/wishlist")
     .all(adminMiddleware)
     .post(wishlist_controller.add_to_wishList)
     .get(wishlist_controller.get_all_wishList)
+
+    routes.route("/wishlist/:id")
+    .all(adminMiddleware)
     .delete(wishlist_controller.destroy_wishList);
 
 module.exports = routes;

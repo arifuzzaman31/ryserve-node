@@ -50,7 +50,7 @@ exports.get_all_wishList = asyncHandler(async (req, res) => {
 });
 
 exports.destroy_wishList = asyncHandler(async (req, res) => {
-  const { id } = await req.query;
+  const id = parseInt(req.params.id, 10);
   const wishList = await prisma.wishList.deleteMany({
     where: {
       AND: [{ userId: req.user.id }, { subAssetComponentId: id }],
