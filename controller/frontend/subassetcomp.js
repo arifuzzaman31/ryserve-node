@@ -3,10 +3,12 @@ const prisma = require("../../db/prisma");
 
 exports.subassetcomp_list = asyncHandler(async (req, res) => {
     const { from, to, populerItem, eventItem, nearBy, type } = await req.query
-    let orderBy = {};
+    let orderBy = {
+    };
     let where = {
         type: type,
-        status: true
+        status: true,
+        deleted:null
     };
     if (eventItem == "yes") {
         where.isEvent = true

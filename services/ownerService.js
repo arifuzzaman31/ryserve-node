@@ -21,35 +21,35 @@ exports.propertyBy = async(userData) => {
 
 exports.allPermission = async() => {
  return [
-  {
-      name: "Business",
-      permissions: [
-          {
-              "id": 1,
-              "permission_name": "Business Create",
-              "slug": "business-create",
-              "status": 1
-          },
-          {
-              "id": 2,
-              "permission_name": "Business View",
-              "slug": "business-view",
-              "status": 1
-          },
-          {
-              "id": 3,
-              "permission_name": "Business Edit",
-              "slug": "business-edit",
-              "status": 1,
-          },
-          {
-              "id": 4,
-              "permission_name": "Business Delete",
-              "slug": "business-delete",
-              "status": 1
-          }
-      ]
-  },
+//   {
+//       name: "Business",
+//       permissions: [
+//           {
+//               "id": 1,
+//               "permission_name": "Business Create",
+//               "slug": "business-create",
+//               "status": 1
+//           },
+//           {
+//               "id": 2,
+//               "permission_name": "Business View",
+//               "slug": "business-view",
+//               "status": 1
+//           },
+//           {
+//               "id": 3,
+//               "permission_name": "Business Edit",
+//               "slug": "business-edit",
+//               "status": 1,
+//           },
+//           {
+//               "id": 4,
+//               "permission_name": "Business Delete",
+//               "slug": "business-delete",
+//               "status": 1
+//           }
+//       ]
+//   },
   {
       name: "Branch",
       permissions: [
