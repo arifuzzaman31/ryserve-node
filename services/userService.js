@@ -129,9 +129,15 @@ const find_or_createUser = async (requestData) => {
       });
       return existSession;
   }
+const bookingDelete = async(userData) => {
+  const result = await prisma.Booking.deleteMany({
+    where:userData
+  });
+  return result
+}
 const appsTerms = async() => {
   return "Write here terms and condition"
 }
 module.exports = {
-    get_user,find_or_createUser,sendOtp,userUpdate,updateUserInfo,setSessionData,clearSession,appsTerms
+    get_user,find_or_createUser,sendOtp,userUpdate,updateUserInfo,setSessionData,clearSession,appsTerms,bookingDelete
 }

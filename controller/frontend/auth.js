@@ -66,6 +66,29 @@ exports.update_me = asyncHandler(async(req,res) => {
     const user = await userService.updateUserInfo(data,id)
     return res.status(200).send(user);
 })
+exports.delete_account = asyncHandler(async(req,res) => {
+    let objData = await req.body;
+    if(objData.email){
+        if(objData.email == 'user@guest.com' || objData.phoneNumber == '01277744111') return {status:404}
+      const findUser = await userService.get_user(objData);
+      if(!findUser){
+            return res.status(400).send({status:false, message: 'User Not Found'})
+      } 
+    }
+    // return objData
+    const user = await prisma.user.update({
+        where:objData,
+        data: {
+            deleted: new Date(),
+            status: false,
+            otp:null
+        }
+    });
+    
+    await userService.clearSession({id:user.id});
+    await userService.bookingDelete({customerId:user.id})
+    return user;
+})
 
 exports.terms_condition = asyncHandler(async(req,res) => {
     const terms = await userService.appsTerms()
