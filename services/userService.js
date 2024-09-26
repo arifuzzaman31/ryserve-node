@@ -47,7 +47,7 @@ const find_or_createUser = async (requestData) => {
 
   const updateUserInfo = async(userData,userId) => {
     const result = await prisma.$transaction(async (prisma) => {
-      const readyData = await helper.make_data(models.userModel,userData)
+      let readyData = await helper.make_data(models.userModel,userData)
       if(readyData.firstName && readyData.lastName){
         readyData = {...readyData,...{name:readyData.firstName+' '+readyData.lastName}}
       }

@@ -78,5 +78,5 @@ const make_data = (model,reqData) => {
     return info
 }
 module.exports = {
-    bcryptHash,hashCheck,slugify,runSMSservice,formattedDate,formatDate,formatDateWithDayName
+    bcryptHash,hashCheck,slugify,runSMSservice,formattedDate,formatDate,formatDateWithDayName,make_data
 }
