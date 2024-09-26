@@ -68,7 +68,15 @@ const formatDateWithDayName = (dateString) => {
     const options = { weekday: 'short' };
     return date.toLocaleDateString('en-US', options);
 }
-
+const make_data = (model,reqData) => {
+    const info = {};
+    model.forEach(field => {
+      if (reqData[field]) {
+        info[field] = reqData[field];
+      }
+    });
+    return info
+}
 module.exports = {
     bcryptHash,hashCheck,slugify,runSMSservice,formattedDate,formatDate,formatDateWithDayName
 }

@@ -1,6 +1,7 @@
 const prisma = require("../db/prisma");
 const helper = require("../helper/helper");
 const authService = require("../services/auth")
+const models = require("../models/model")
 
 const get_user = async(requestData) => {
     const user = await prisma.user.findFirst({
@@ -46,23 +47,15 @@ const find_or_createUser = async (requestData) => {
 
   const updateUserInfo = async(userData,userId) => {
     const result = await prisma.$transaction(async (prisma) => {
-      const username = userData.firstName ? userData.firstName +' '+userData.lastName : 'user';
+      const readyData = await helper.make_data(models.userModel,userData)
+      if(readyData.firstName && readyData.lastName){
+        readyData = {...readyData,...{name:readyData.firstName+' '+readyData.lastName}}
+      }
       const user = await prisma.user.update({
         where: {
           id: userId
         },
-        data:{
-          firstName: userData.firstName,
-          lastName : userData.lastName,
-          name : username,
-          email : userData.email,
-          birthDate: userData.birthDate ? new Date(userData.birthDate) : null,
-          residenceAddress: userData.residenceAddress ?? '-',
-          status : true,
-          otp : null,
-          isVerify : true,
-          otpExpireAt : null
-        }
+        data:readyData
       });
       return user;
     });
