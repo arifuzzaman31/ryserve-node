@@ -30,7 +30,7 @@ exports.otp_login = asyncHandler(async (req, res) => {
                 const updateUser = await userService.userUpdate(req.body, userData.id)
                 return res.status(201).send({ moreInfo: userData.isVerify === false ? true : false, user: updateUser });
             } else {
-                const updateUser = await userService.userUpdate(req.body, userData.id)
+                const updateUser = await userService.userUpdate({...req.body,...{isVerify:true}}, userData.id)
                 return res.status(200).send(updateUser);
             }
         }
