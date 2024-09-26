@@ -77,13 +77,8 @@ exports.delete_account = asyncHandler(async(req,res) => {
       } 
     }
     // return objData
-    const user = await prisma.user.update({
-        where:objData,
-        data: {
-            deleted: new Date(),
-            status: false,
-            otp:null
-        }
+    const user = await prisma.user.delete({
+        where:objData
     });
     
     await userService.clearSession({id:user.id});
