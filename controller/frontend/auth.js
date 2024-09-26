@@ -87,7 +87,7 @@ exports.delete_account = asyncHandler(async(req,res) => {
     
     await userService.clearSession({id:user.id});
     await userService.bookingDelete({customerId:user.id})
-    return user;
+    return res.status(200).send({status:true,user:user, message: 'User Deleted Successful!'})
 })
 
 exports.terms_condition = asyncHandler(async(req,res) => {
