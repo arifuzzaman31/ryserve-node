@@ -160,6 +160,8 @@ exports.update_booking = asyncHandler(async (req, res) => {
         : prevasset.endDate);
     prepareData.slot = data.slot ?? prevasset.slot;
     prepareData.guestNumber = data.guestNumber ?? prevasset.guestNumber;
+    prepareData.cancelReason = data.cancelReason ?? prevasset.cancelReason;
+    prepareData.status = data.status ?? prevasset.status;
     if (data.tableId) {
       prepareData.tableId = data.tableId;
     }
