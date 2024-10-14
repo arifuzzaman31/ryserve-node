@@ -29,7 +29,7 @@ const find_or_createUser = async (requestData) => {
         const expirationTime = new Date(
           currentTime.getTime() + 30 * 60 * 1000
         );
-        const code = Math.floor(1000 + Math.random() * 9000);
+        let code = Math.floor(1000 + Math.random() * 9000);
         if(userData.phoneNumber == '01412222221'){
           code = 4567;
         }
