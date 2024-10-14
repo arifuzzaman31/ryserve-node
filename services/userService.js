@@ -57,6 +57,9 @@ const find_or_createUser = async (requestData) => {
       if(readyData.firstName && readyData.lastName){
         readyData = {...readyData,...{name:readyData.firstName+' '+readyData.lastName}}
       }
+      if(["01412222221","01277744111"].includes(readyData.phoneNumber)){
+        return readyData;
+      }
       const user = await prisma.user.update({
         where: {
           id: userId
@@ -131,7 +134,7 @@ const find_or_createUser = async (requestData) => {
 
   const guestLogin = async(userData) => {
     const dt = await authService.generateUserToken({...userData,...{platform:'APPS_USER'}})
-    const tokenUser = {userData, ...{token:dt}};
+    const tokenUser = {...{user:userData}, ...{token:dt}};
     await setSessionData(tokenUser)
     return tokenUser;
   }
