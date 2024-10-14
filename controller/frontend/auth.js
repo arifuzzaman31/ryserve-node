@@ -35,7 +35,7 @@ exports.otp_login = asyncHandler(async (req, res) => {
             }
         }
         if (pathname.for == 'guest') {
-            const updateUser = await userService.userUpdate(userData, userData.id)
+            const updateUser = await userService.guestLogin(userData)
             return res.status(200).send(updateUser);
         }
     }
