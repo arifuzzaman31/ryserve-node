@@ -56,7 +56,7 @@ exports.auth_me = asyncHandler(async(req,res) => {
    const info = await authService.userByToken(req.headers.authorization)
    const user = await userService.get_user({id:info.id})
    if(user){
-        return res.status(200).send(user);
+        return res.status(200).send({...user,...{name:user.firstName+' '+user.lastName}});
    }
     return res.status(401).send({status:false, message: 'Invalid User' });
 })
