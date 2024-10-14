@@ -12,6 +12,7 @@ const generateUserToken = async (userData) => {
   }
   if(["apps","APPS_USER"].includes(userData.platform)) {
     payload.email = userData.email
+    payload.name = userData.firstName+' '+userData.lastName
     payload.phoneNumber = userData.phoneNumber
   }
   const secret = process.env.JWT_SECRET;
