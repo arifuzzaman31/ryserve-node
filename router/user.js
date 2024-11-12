@@ -18,7 +18,7 @@ routes.post("/slic-token", async(req,res) => {
             });
         
             const resp = await axios.post(
-              "https://120.50.12.81:8501/token",
+              "http://120.50.12.81:8501/token",
               {
                 "ApiKey": "$2b$12$rg.troP82UZf9a4xH3PBBOHWvKKzAOhrCyy4i29df4HDquDGe7nzK",
                 "UserName": "WebAble"
