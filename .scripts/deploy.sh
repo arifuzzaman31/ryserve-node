@@ -11,6 +11,6 @@ echo "Installing Dependencies..."
 npm install --yes
 
 echo "PM2 Reload"
-pm2 restart noderyserve || pm2 restart 1
+pm2 restart ryserveone || pm2 restart 1
 
 echo "Deployment Finished!"
