@@ -75,7 +75,7 @@ exports.policy_info = asyncHandler(async (req, res) => {
         return res.status(200).send(resp.data);
       } catch (error) {
         console.error('Error making request:', error);
-        return res.status(500).send({ error: 'Failed to make request' });
+        return res.status(500).send({ error: error });
       }
 });
 
@@ -102,6 +102,6 @@ exports.agent_info = asyncHandler(async (req, res) => {
         return res.status(200).send(resp.data);
       } catch (error) {
         console.error('Error making request:', error);
-        return res.status(500).send({ error: 'Failed to make request' });
+        return res.status(500).send({ error: error});
       }
 });
