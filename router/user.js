@@ -15,5 +15,6 @@ routes.post("/slic-token",slic_controller.slic_token);
 routes.post("/prem-cal",slic_controller.prem_cal);
 routes.post("/policy-info",slic_controller.policy_info);
 routes.post("/agent-info",slic_controller.agent_info);
+routes.post("/agent-dues",slic_controller.agent_dues);
 
 module.exports = routes;

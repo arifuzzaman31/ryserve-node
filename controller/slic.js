@@ -105,3 +105,30 @@ exports.agent_info = asyncHandler(async (req, res) => {
         return res.status(500).send({ error: 'Failed to make request' });
       }
 });
+
+exports.agent_dues = asyncHandler(async (req, res) => {
+    const param = await req.body;
+    const apiUrl = `http://120.50.12.81:8501/agent_dues?fa_id=${param.faId}`;
+    try {
+        const httpsAgent = new https.Agent({
+          rejectUnauthorized: false,
+        });
+    
+        const resp = await axios.get(
+            apiUrl,
+          {
+            headers: {
+              Authorization: `Bearer ${param.token}`,
+              "Content-Type": "application/json",
+            }
+          },
+          {
+            httpsAgent,
+          }
+        );
+        return res.status(200).send(resp.data);
+      } catch (error) {
+        console.error('Error making request:', error);
+        return res.status(500).send({ error: 'Failed to make request' });
+      }
+});
